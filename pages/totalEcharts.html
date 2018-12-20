@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>平台汇总数据</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="../css/mui.min.css">
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="../css/app.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/mui.picker.min.css"/>
+    <style>
+        .chart {
+            height: 200px;
+            margin: 0px;
+            padding: 0px;
+        }
+
+        h5 {
+            margin-top: 30px;
+            font-weight: bold;
+        }
+
+        h5:first-child {
+            margin-top: 15px;
+        }
+
+        .clear-btn {
+            display: none;
+        }
+    </style>
+    <script src="../js/mui.min.js"></script>
+</head>
+
+<body>
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+    <h1 class="mui-title">平台汇总数据</h1>
+</header>
+<div class="mui-content">
+    <!--<p style="text-indent: 22px;">
+        这是mui集成百度ECharts的图表示例，ECharts的详细用法及 API 请参考其官方网站: <a id='echarts' data-url='http://echarts.baidu.com'>http://echarts.baidu.com</a>
+    </p>-->
+    <!--<h5 class="mui-content-padded">选择时间范围</h5>-->
+
+    <ul class="mui-table-view mui-table-view-chevron">
+
+        <li class="mui-table-view-cell btn-start" data-options='{"type":"date","value":"2018-07-13"}'>
+            选择开始日期: &nbsp;&nbsp;<span class="show-date"></span>
+            <span class="mui-navigate-right"></span>
+            <button type="button" class="mui-btn mui-btn-primary clear-btn">
+                清除
+            </button>
+        </li>
+        <li class="mui-table-view-cell btn-end" data-options='{"type":"date", "value":"2018-08-20"}'>
+            选择结束日期: &nbsp;&nbsp;<span class="show-date"></span>
+            <span class="mui-navigate-right"></span>
+            <button type="button" class="mui-btn mui-btn-primary clear-btn">
+                清除
+            </button>
+        </li>
+    </ul>
+    <div class="mui-content-padded">
+        <h5>平台汇总</h5>
+        <div class="chart" id="barChart"></div>
+<!--        <h5>线图示例</h5>
+        <div class="chart" id="lineChart"></div>-->
+        <h5>数据分布</h5>
+        <div class="chart" id="pieChart"></div>
+    </div>
+</div>
+<script src="../js/mui.min.js"></script>
+<!--<script src="../js/mui.picker.js"></script>
+<script src="../js/mui.dtpicker.js"></script>-->
+
+<script src="../js/jquery-3.3.1.js"></script>
+<script src="../js/mui.picker.min.js"></script>
+<script src="../libs/echarts-all.js"></script>
+<script>
+    $(function () {
+        mui.init();
+        var btns = $('.btn'); //'{"begin_date":"2018-07-13","end_date":"2018-08-20","user_id":"1","exchange_type":"油信宝","data_type":"2"}';
+        var dataTimeParams= {"begin_date":"","end_date":"","user_id":"1","exchange_type":"油信宝","data_type":"2"};
+        var startDateTime = '';
+        var endDateTime = '';
+        $('.btn-start')[0].addEventListener('click', function () {
+            debugger
+            var _self = this;
+            if (_self.picker) {
+                _self.picker.show(function (rs) {
+                    var clearBtn = $(_self).children().first().next().next('button');
+                    $(_self).children().first().text(rs.text).next().next('button').show();
+                    // _self.picker.dispose();
+                    // _self.picker = null;
+                    // var params= {"begin_date":'',"end_date":"","user_id":"1","exchange_type":"油信宝","data_type":"2"};
+                    dataTimeParams.begin_date=rs.text;
+                    var dateTimeStr = rs.text.split('-');
+                    console.log(dateTimeStr)
+                    endDateTime= new Date(dateTimeStr[0],dateTimeStr[1],dateTimeStr[2]);
+                    showTablePicData(JSON.stringify(dataTimeParams))
+                });
+            } else {
+                var optionsJson = this.getAttribute('data-options') || '{}';
+                var options = JSON.parse(optionsJson);
+                options.endDate = startDateTime;
+                var id = this.getAttribute('id');
+                /*
+                 * 首次显示时实例化组件
+                 * 示例为了简洁，将 options 放在了按钮的 dom 上
+                 * 也可以直接通过代码声明 optinos 用于实例化 DtPicker
+                 */
+                _self.picker = new mui.DtPicker(options);
+                _self.picker.show(function (rs) {
+                    /*
+                     * rs.value 拼合后的 value
+                     * rs.text 拼合后的 text
+                     * rs.y 年，可以通过 rs.y.vaue 和 rs.y.text 获取值和文本
+                     * rs.m 月，用法同年
+                     * rs.d 日，用法同年
+                     * rs.h 时，用法同年
+                     * rs.i 分（minutes 的第二个字母），用法同年
+                     */
+                    var clearBtn = $(_self).children().first().next().next('button');
+                    $(_self).children().first().text(rs.text).next().next('button').show();
+                    // var params= {"begin_date":"","end_date":"","user_id":"1","exchange_type":"油信宝","data_type":"2"};
+                    dataTimeParams.begin_date=rs.text;
+                    var dateTimeStr = rs.text.split('-');
+                    console.log(dateTimeStr)
+                    endDateTime= new Date(dateTimeStr[0],dateTimeStr[1],dateTimeStr[2]);
+                    dataTimeParams.end_date='';//清空endDate
+                    // $(_self).next().children('.clear-btn').click();
+                    $(_self).next().children('.show-date').text('');
+                    showTablePicData(JSON.stringify(dataTimeParams));
+                    /*
+                     * 返回 false 可以阻止选择框的关闭
+                     * return false;
+                     */
+                    /*
+                     * 释放组件资源，释放后将将不能再操作组件
+                     * 通常情况下，不需要示放组件，new DtPicker(options) 后，可以一直使用。
+                     * 当前示例，因为内容较多，如不进行资原释放，在某些设备上会较慢。
+                     * 所以每次用完便立即调用 dispose 进行释放，下次用时再创建新实例。
+                     */
+                    _self.picker.dispose();
+                    _self.picker = null;
+                });
+            }
+
+        }, false);
+
+        $('.btn-end')[0].addEventListener('click', function () {
+            var _self = this;
+            if (_self.picker) {
+                _self.picker.show(function (rs) {
+                    var clearBtn = $(_self).children().first().next().next('button');
+                    $(_self).children().first().text(rs.text).next().next('button').show();
+                    // var params= {"begin_date":"","end_date":"","user_id":"1","exchange_type":"油信宝","data_type":"2"};
+                    dataTimeParams.end_date=rs.text;
+
+                    var dateTimeStr = rs.text.split('-');
+                    console.log(dateTimeStr)
+                    startDateTime= new Date(dateTimeStr[0],dateTimeStr[1],dateTimeStr[2]);
+
+
+
+                    showTablePicData(JSON.stringify(dataTimeParams))
+                    // _self.picker.dispose();
+                    // _self.picker = null;
+                });
+            } else {
+                var optionsJson = this.getAttribute('data-options') || '{}';
+                var options = JSON.parse(optionsJson);
+                options.beginDate = endDateTime;
+                console.log(options)
+                var id = this.getAttribute('id');
+                /*
+                 * 首次显示时实例化组件
+                 * 示例为了简洁，将 options 放在了按钮的 dom 上
+                 * 也可以直接通过代码声明 optinos 用于实例化 DtPicker
+                 */
+                _self.picker = new mui.DtPicker(options);
+                _self.picker.show(function (rs) {
+                    /*
+                     * rs.value 拼合后的 value
+                     * rs.text 拼合后的 text
+                     * rs.y 年，可以通过 rs.y.vaue 和 rs.y.text 获取值和文本
+                     * rs.m 月，用法同年
+                     * rs.d 日，用法同年
+                     * rs.h 时，用法同年
+                     * rs.i 分（minutes 的第二个字母），用法同年
+                     */
+                    var clearBtn = $(_self).children().first().next().next('button');
+                    $(_self).children().first().text(rs.text).next().next('button').show();
+                    dataTimeParams.end_date=rs.text;
+                    var dateTimeStr = rs.text.split('-');
+                    console.log(dateTimeStr)
+                    startDateTime= new Date(dateTimeStr[0],dateTimeStr[1],dateTimeStr[2]);
+                    showTablePicData(JSON.stringify(dataTimeParams));
+                    /*
+                     * 返回 false 可以阻止选择框的关闭
+                     * return false;
+                     */
+                    /*
+                     * 释放组件资源，释放后将将不能再操作组件
+                     * 通常情况下，不需要示放组件，new DtPicker(options) 后，可以一直使用。
+                     * 当前示例，因为内容较多，如不进行资原释放，在某些设备上会较慢。
+                     * 所以每次用完便立即调用 dispose 进行释放，下次用时再创建新实例。
+                     */
+                    _self.picker.dispose();
+                    _self.picker = null;
+                });
+            }
+
+        }, false);
+
+        $('.clear-btn').on('click', function (event) {
+            event.stopPropagation();//阻止事件冒泡即可
+            $(this).parent().children('.show-date').text('');
+            $(this).hide();
+        });
+
+        var getOption = function (chartType, barChatData, chartMouth, plateName) {
+
+            var chartOption = chartType == 'pie' ? {
+                calculable: false,
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b}: {c} ({d}%)",
+                    backgroundColor: 'rgba(245, 245, 245, 0.8)',
+                    borderWidth: 1,
+                    borderColor: '#ccc',
+                    padding: 2,
+                    textStyle: {
+                        color: '#000',
+                        fontSize:10
+                    },
+                },
+                series: [{
+                    name: '数据汇总',
+                    type: 'pie',
+                    selectedMode: 'single',
+                    radius: '65%',
+                    center: ['50%', '50%'],
+                    normal:{
+                        label:{
+                            show: true,
+                            labelLine :{show:true},
+                            formatter: '{a|{a}}{abg|}\n{hr|}\n  {b|{b}：}{c}  {per|{d}%}  ',
+                            backgroundColor: '#eee',
+                            borderColor: '#aaa',
+                            borderWidth: 1,
+                            borderRadius: 4,
+                            // shadowBlur:3,
+                            // shadowOffsetX: 2,
+                            // shadowOffsetY: 2,
+                            // shadowColor: '#999',
+                            // padding: [0, 7],
+                            rich: {
+                                a: {
+                                    color: '#999',
+                                    lineHeight: 20,
+                                    align: 'center',
+                                    fontSize: 10
+                                },
+                                // abg: {
+                                //     backgroundColor: '#333',
+                                //     width: '100%',
+                                //     align: 'right',
+                                //     height: 22,
+                                //     borderRadius: [4, 4, 0, 0]
+                                // },
+                                hr: {
+                                    borderColor: '#aaa',
+                                    width: '100%',
+                                    borderWidth: 0.5,
+                                    height: 0
+                                },
+                                b: {
+                                    fontSize: 10,
+                                    lineHeight: 20
+                                },
+                                per: {
+                                    color: '#eee',
+                                    backgroundColor: '#334455',
+                                    padding: [2, 4],
+                                    borderRadius: 2
+                                }
+                            }
+                        },
+                        labelLine :{show:true},
+
+                    },
+              /*      label: {
+                        show:true,
+                        normal: {
+                            labelLine :{show:true},
+                            formatter: '{a|{a}}{abg|}\n{hr|}\n  {b|{b}：}{c}  {per|{d}%}  ',
+                            backgroundColor: '#eee',
+                            borderColor: '#aaa',
+                            borderWidth: 1,
+                            borderRadius: 4,
+                            // shadowBlur:3,
+                            // shadowOffsetX: 2,
+                            // shadowOffsetY: 2,
+                            // shadowColor: '#999',
+                            // padding: [0, 7],
+                            rich: {
+                                a: {
+                                    color: '#999',
+                                    lineHeight: 20,
+                                    align: 'center',
+                                    fontSize: 10
+                                },
+                                // abg: {
+                                //     backgroundColor: '#333',
+                                //     width: '100%',
+                                //     align: 'right',
+                                //     height: 22,
+                                //     borderRadius: [4, 4, 0, 0]
+                                // },
+                                hr: {
+                                    borderColor: '#aaa',
+                                    width: '100%',
+                                    borderWidth: 0.5,
+                                    height: 0
+                                },
+                                b: {
+                                    fontSize: 10,
+                                    lineHeight: 20
+                                },
+                                per: {
+                                    color: '#eee',
+                                    backgroundColor: '#334455',
+                                    padding: [2, 4],
+                                    borderRadius: 2
+                                }
+                            }
+                        }
+                    },*/
+                    /*data: [{
+                        value: 452,
+                        name: '油信宝'
+                    }, {
+                        value: 310,
+                        name: '微信'
+                    }, {
+                        value: 125,
+                        name: '车友网'
+                    }]*/
+                }]
+            } : {
+                legend: {
+                    // data: [chartData.plateName]
+                    data: [''],
+                    selectedMode: true,
+                    textStyle: {
+                        fontSize:12,
+                        color: '#06B800',
+                        backgroundColor: '#06B800'
+                    }
+                },
+                grid: {
+                    x: 52,  //左边坐标系
+                    x2: 30,// 右边坐标系
+                    y: 30,
+                    y2: 25
+                },
+                axisPointer:{
+                    link: {xAxisIndex: 'all'},
+                    label: {
+                        backgroundColor: '#777'
+                    }
+                },
+                tooltip:{
+                    trigger: 'axis',
+                    axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                        type : 'line'        // 默认为直线，可选为：'line' | 'shadow' | 'cross'
+                    },
+                    backgroundColor: 'rgba(245, 245, 245, 0.8)',
+                    borderWidth: 1,
+                    borderColor: '#ccc',
+                    padding: 2,
+                    textStyle: {
+                        color: '#000',
+                        fontSize:10
+                    },
+                },
+                toolbox: {
+                    show: false,
+                    feature: {
+                        dataZoom: {
+                            yAxisIndex: false
+                        },
+                        brush: {
+                            type: ['lineX', 'clear']
+                        },
+                        mark: {
+                            show: true
+                        },
+                        dataView: {
+                            show: true,
+                            readOnly: false
+                        },
+                        magicType: {
+                            show: true,
+                            type: ['line', 'bar']
+                        },
+                        restore: {
+                            show: true
+                        },
+                        saveAsImage: {
+                            show: true
+                        }
+                    }
+                },
+                calculable: false,
+                xAxis: [{
+                    type: 'category',
+                    scale: true,
+                    axisTick: {
+                        alignWithLabel: true
+                    },
+                    boundaryGap: ['20%', '20%'],
+                    // boundaryGap : false,
+                    axisLine: {onZero: false},
+                    splitLine: {show: false},
+                    splitNumber: 5,
+                    min: 'dataMin',
+                    max: 'dataMax',
+                    axisPointer: {
+                        z: 100
+                    },
+                    // data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+                    data: chartMouth,
+                    nameTextStyle:10
+                }],
+                yAxis: [{
+                    type: 'value',
+                    splitArea: {
+                        show: true
+                    }
+                }],
+                series: barChatData
+            };
+            return chartOption;
+        };
+
+        var getOptionOfPie = function (pieData) {
+debugger
+            var chartOption ={
+                calculable: false,
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b}: {c} ({d}%)",
+                    backgroundColor: 'rgba(245, 245, 245, 0.8)',
+                    borderWidth: 1,
+                    borderColor: '#ccc',
+                    padding: 2,
+                    textStyle: {
+                        color: '#000',
+                        fontSize:10
+                    },
+                },
+                series: [{
+                    name: '数据汇总',
+                    type: 'pie',
+                    selectedMode: 'single',
+                    radius: '65%',
+                    center: ['50%', '50%'],
+                    normal:{
+                        label:{
+                            show: true,
+                            labelLine :{show:true},
+                            formatter: '{a|{a}}{abg|}\n{hr|}\n  {b|{b}：}{c}  {per|{d}%}  ',
+                            backgroundColor: '#eee',
+                            borderColor: '#aaa',
+                            borderWidth: 1,
+                            borderRadius: 4,
+                            // shadowBlur:3,
+                            // shadowOffsetX: 2,
+                            // shadowOffsetY: 2,
+                            // shadowColor: '#999',
+                            // padding: [0, 7],
+                            rich: {
+                                a: {
+                                    color: '#999',
+                                    lineHeight: 20,
+                                    align: 'center',
+                                    fontSize: 10
+                                },
+                                // abg: {
+                                //     backgroundColor: '#333',
+                                //     width: '100%',
+                                //     align: 'right',
+                                //     height: 22,
+                                //     borderRadius: [4, 4, 0, 0]
+                                // },
+                                hr: {
+                                    borderColor: '#aaa',
+                                    width: '100%',
+                                    borderWidth: 0.5,
+                                    height: 0
+                                },
+                                b: {
+                                    fontSize: 10,
+                                    lineHeight: 20
+                                },
+                                per: {
+                                    color: '#eee',
+                                    backgroundColor: '#334455',
+                                    padding: [2, 4],
+                                    borderRadius: 2
+                                }
+                            }
+                        },
+                        labelLine :{show:true},
+
+                    },
+                    /*      label: {
+                              show:true,
+                              normal: {
+                                  labelLine :{show:true},
+                                  formatter: '{a|{a}}{abg|}\n{hr|}\n  {b|{b}：}{c}  {per|{d}%}  ',
+                                  backgroundColor: '#eee',
+                                  borderColor: '#aaa',
+                                  borderWidth: 1,
+                                  borderRadius: 4,
+                                  // shadowBlur:3,
+                                  // shadowOffsetX: 2,
+                                  // shadowOffsetY: 2,
+                                  // shadowColor: '#999',
+                                  // padding: [0, 7],
+                                  rich: {
+                                      a: {
+                                          color: '#999',
+                                          lineHeight: 20,
+                                          align: 'center',
+                                          fontSize: 10
+                                      },
+                                      // abg: {
+                                      //     backgroundColor: '#333',
+                                      //     width: '100%',
+                                      //     align: 'right',
+                                      //     height: 22,
+                                      //     borderRadius: [4, 4, 0, 0]
+                                      // },
+                                      hr: {
+                                          borderColor: '#aaa',
+                                          width: '100%',
+                                          borderWidth: 0.5,
+                                          height: 0
+                                      },
+                                      b: {
+                                          fontSize: 10,
+                                          lineHeight: 20
+                                      },
+                                      per: {
+                                          color: '#eee',
+                                          backgroundColor: '#334455',
+                                          padding: [2, 4],
+                                          borderRadius: 2
+                                      }
+                                  }
+                              }
+                          },*/
+                    /*data: [{
+                        value: 452,
+                        name: '油信宝'
+                    }, {
+                        value: 310,
+                        name: '微信'
+                    }, {
+                        value: 125,
+                        name: '车友网'
+                    }]*/
+                    data:pieData
+                }]
+            }
+            return chartOption;
+        };
+        // 表格数据
+
+        // 总数据 type3
+        var param = '{"begin_date":"2018-07-13","end_date":"2018-08-20","user_id":"1","exchange_type":"油信宝","data_type":"3"}';
+        showTablePicData(param);
+
+
+
+
+function showTablePicData(params){
+    $.ajax({
+        type: 'post',
+        // url:'http://192.168.10.23:9000/Yxb/Check_Amount',
+        url: 'http://192.168.10.23:8080/hdptms/SaleDataInfo',
+        dateType: 'json',
+        data: { // data_type:1 全部
+            // params: '{"begin_date":"2018-07-13","end_date":"2018-08-20","user_id":"1","exchange_type":"油信宝","data_type":"2"}'
+            params: params
+        },
+        success: function (res) {
+            debugger
+            console.log(res);
+            var resJsonStr = JSON.parse(res);
+            res = resJsonStr.data[0];
+            var barChatData = [];
+            var dataName = [];
+            for (var key in res) {
+                if (res[key].length == 0) {
+                    continue;
+                }
+                var mouths = [];
+                var exchageAmount = [];
+                var plateName = '';
+
+                var plateObj = {
+                    name: '',
+                    type: '',
+                    data: []
+                }
+                var keyObj ={
+                    name:key,
+                    icon:'pin',  //ECharts 提供的标记类型包括 'circle', 'rect', 'roundRect', 'triangle', 'diamond', 'pin', 'arrow', 'none'
+                    textStyle:{
+                        backgroundColor:'#06B800'
+                    }
+                }
+                dataName.push(keyObj);
+                for (var i = 0; i < res[key].length; i++) {
+                    mouths.push(res[key][i].DATA_CREATE_TIME);
+                    exchageAmount.push(res[key][i].SUM_EXCHANGE_AMOUNT);
+                    plateName = res[key][i].T0004_EXCHANGE_TYPE;
+                }
+                plateObj.data = exchageAmount;
+                plateObj.name = plateName;
+                plateObj.type = 'bar';
+                plateObj.itemStyle={normal:{color:'#06B800'}};
+                barChatData.push(plateObj);
+            }
+
+            console.log('mouths：' + mouths)
+            console.log(barChatData)
+            console.log('dataName：' + dataName)
+            // var chartData = {mouths: mouths, exchageAmount: exchageAmount, plateName: plateName};
+            var byId = function (id) {
+                return document.getElementById(id);
+            };
+            var barChart = echarts.init(byId('barChart'));
+            barChart.setOption(getOption('bar', barChatData, mouths, dataName));
+        }
+
+    });
+}
+
+
+        $.ajax({
+            type: 'post',
+            // url:'http://192.168.10.23:9000/Yxb/Check_Amount',
+            url: 'http://192.168.10.23:8080/hdptms/SaleDataInfo',
+            dateType: 'json',
+            data: { // data_type:4 各个平台总量
+                params: '{"begin_date":"2018-07-13","end_date":"2018-08-20","user_id":"1","exchange_type":"油信宝","data_type":"4"}'
+                // params: params
+            },
+            success: function (res) {
+                debugger
+                console.log(res);
+                var resJsonStr = JSON.parse(res);
+                res = resJsonStr.data[0];
+
+                var pieData='';
+                var pieDataArr =[];
+                for(var key in res){
+                    debugger
+                    pieDataArr.push(res[key]);
+                }
+
+                var newPieDataArr = [];
+                for(var i=0; i<pieDataArr.length; i++){
+                    newPieDataArr.push({name:pieDataArr[i][0].T0004_EXCHANGE_TYPE,value:pieDataArr[i][0].SUM_EXCHANGE_AMOUNT})
+                }
+
+                console.log(newPieDataArr)
+
+                // 饼图
+                var byId = function (id) {
+                    return document.getElementById(id);
+                };
+                var barCharts = echarts.init(byId('pieChart'));
+                barCharts.setOption(getOptionOfPie(newPieDataArr));
+
+
+                // 处理点击事件并且跳转到相应的百度搜索页面
+                barCharts.on('click', function (params) {
+                    debugger
+                    // alert("饼图点击事件"+ params.name);
+
+                    window.location.href = "echarts.html?dataType="+params.name ;
+                    /*mui.openWindow({
+                        url: "echarts.html",
+                        id: 'echarts',
+                        preload: true,
+                        show: {
+                            aniShow: 'pop-in'
+                        },
+                        extras: {
+                            dataType: params.name
+                        },
+                        styles: {
+                            popGesture: 'hide'
+                        },
+                        waiting: {
+                            autoShow: false
+                        },
+                    });*/
+
+
+                    // window.open('https://www.baidu.com/s?wd=' + encodeURIComponent(params.name));
+                })
+            }
+
+        });
+
+
+
+
+
+
+// 打开外链
+        // var byId = function (id) {
+        //     return document.getElementById(id);
+        // };
+        // var barChart = echarts.init(byId('barChart'));
+
+        // barChart.setOption(getOption('bar'));
+        // var lineChart = echarts.init(byId('lineChart'));
+        // lineChart.setOption(getOption('line'));
+        // var pieChart = echarts.init(byId('pieChart'));
+        // pieChart.setOption(getOption('pie'));
+        // byId("echarts").addEventListener('click', function () {
+        //     var url = this.getAttribute('data-url');
+        //     plus.runtime.openURL(url);
+        // }, false);
+    })
+
+</script>
+</body>
+
+</html>
