@@ -64,7 +64,8 @@
         </li>
     </ul>
     <div class="mui-content-padded">
-        <h5>油信宝</h5>
+        <h5 class="station-name"></h5>
+        <p>销售额: <span class="totalMoney"></span></p>
         <div class="chart" id="barChart"></div>
         <!--  <h5>线图示例</h5>
           <div class="chart" id="lineChart"></div>
@@ -84,33 +85,25 @@
 
     $(function () {
         mui.init();
-
         // 在原生环境中
         mui.plusReady(function () {
             debugger
             var dataType = plus.webview.currentWebview().dataType;
 
-
-
-
         });
-
         // 浏览器中
-        // var dataType =  getRequest().dataType;
-
         var dataFromUrl = getRequest();
         var dataType = dataFromUrl.dataType;
+        var stationId = dataFromUrl.stationId;
+        var stationName = dataFromUrl.stationName;
         var beginDate = dataFromUrl.beginDate;
         var endDate = dataFromUrl.endDate;
 
-        $('.my-title').text(dataType + '数据');
-        $('title').text(dataType + '数据');
-
+        $('.start-date').text(beginDate);
+        $('.end-date').text(endDate);
 
         // 默认时间段一个月 当天开始
         //获取当前时间，格式YYYY-MM-DD
-        debugger
-
         function getNowFormatDate() {
             var date = new Date();
             var seperator1 = "-";
@@ -147,16 +140,14 @@
         var nowDate = getNowFormatDate();
         var beforeThirtyDate = getAfterThirtyFormatDate();
 
-        if (beginDate) {
-            $('.start-date').text(beginDate);
-            $('.end-date').text(endDate);
-        } else {
-            $('.start-date').text(beforeThirtyDate);
-            $('.end-date').text(nowDate);
-        }
 
+        $('.my-title').text(dataType + '数据');
+        $('title').text(dataType + '数据');
+        $('.station-name').text(stationName);
 
         console.log(dataType)
+        console.log(stationId)
+        console.log(stationName)
 
         function getRequest() {
             var url = window.location.search; //获取url中"?"符后的字串
@@ -175,20 +166,20 @@
         }
 
         var btns = $('.btn'); //'{"begin_date":"2018-07-13","end_date":"2018-08-20","user_id":"1","exchange_type":"油信宝","data_type":"2"}';
-
+        debugger
         var dataTimeParams = {
             "begin_date": beforeThirtyDate,
             "end_date": nowDate,
-            "user_id": "1",
+            "station_id": stationId,
             "exchange_type": dataType,
             "data_type": "2"
         };
-        debugger
-        if (beginDate) {
+
+        if(beginDate){
             dataTimeParams = {
                 "begin_date": beginDate,
                 "end_date": endDate,
-                "user_id": "1",
+                "station_id": stationId,
                 "exchange_type": dataType,
                 "data_type": "2"
             };
@@ -208,7 +199,6 @@
                     // var params= {"begin_date":'',"end_date":"","user_id":"1","exchange_type":"油信宝","data_type":"2"};
                     dataTimeParams.begin_date = rs.text;
                     var dateTimeStr = rs.text.split('-');
-                    dataTimeParams.end_date = '';//清空endDate
                     console.log(dateTimeStr)
                     endDateTime = new Date(dateTimeStr[0], dateTimeStr[1], dateTimeStr[2]);
                     showTablePicData(JSON.stringify(dataTimeParams))
@@ -270,6 +260,7 @@
                     $(_self).children().first().text(rs.text).next().next('button').show();
                     // var params= {"begin_date":"","end_date":"","user_id":"1","exchange_type":"油信宝","data_type":"2"};
                     dataTimeParams.end_date = rs.text;
+
                     var dateTimeStr = rs.text.split('-');
                     console.log(dateTimeStr)
                     startDateTime = new Date(dateTimeStr[0], dateTimeStr[1], dateTimeStr[2]);
@@ -331,7 +322,6 @@
 
         var getOption = function (chartType, barChatData, chartMouth, plateName) {
 
-            debugger
             var chartOption = chartType == 'pie' ? {
                 calculable: false,
                 series: [{
@@ -454,31 +444,27 @@
         };
         // 表格数据
 
-        // var param = '{"begin_date":"2018-07-13","end_date":"2018-08-20","user_id":"1","exchange_type":' + dataType + ',"data_type":"2"}';
-       /* var param = {
+        /*var param = {
             "begin_date": beforeThirtyDate,
             "end_date": nowDate,
-            "user_id": "1",
+            "station_id": stationId,
             "exchange_type": dataType,
             "data_type": "2"
         };*/
         showTablePicData(JSON.stringify(dataTimeParams));
-
         function showTablePicData(params) {
             $.ajax({
                 type: 'post',
                 // url:'http://192.168.10.23:9000/Yxb/Check_Amount',
-                url: 'http://192.168.10.23:8080/hdptms/SaleDataInfo',
+                url: 'http://192.168.10.23:8080/hdptms/SaleStationDataInfo',
                 dateType: 'json',
                 data: { // data_type:1 全部
                     // params: '{"begin_date":"2018-07-13","end_date":"2018-08-20","user_id":"1","exchange_type":"油信宝","data_type":"2"}'
                     params: params
                 },
                 success: function (res) {
-                    debugger
                     console.log(res);
                     var resJsonStr = JSON.parse(res);
-
                     if (resJsonStr.code == 0) {
                         res = resJsonStr.data[0];
                         var barChatData = [];
@@ -525,16 +511,22 @@
                         };
                         var barChart = echarts.init(byId('barChart'));
                         barChart.setOption(getOption('bar', barChatData, mouths, dataName));
+                        var totalMoney=0;
+                        for(var i=0; i<barChatData[0].data.length; i++){
+                            totalMoney= totalMoney +  new Number(barChatData[0].data[i]);
+                        }
+                        $('.totalMoney').text(totalMoney.toFixed(2))
+
                     }else{
-                        // mui.alert('暂时没有数据！');
+                        $('.totalMoney').text('')
                         var byId = function (id) {
                             return document.getElementById(id);
                         };
                         var barChart = echarts.init(byId('barChart'));
-                        var nullData=[{data:[],itemStyle:{normal:{color:'#000'}},name:"",type: "bar"}]
-                        barChart.setOption(getOption('bar',nullData ));
-                    }
+                        var nullData=[{data:[],itemStyle:{normal:{color:'#000'}},name:"",type: "bar"}];
+                        barChart.setOption(getOption('bar',nullData));
 
+                    }
                 }
 
             });
