@@ -85,9 +85,9 @@
 
     $(function () {
         mui.init();
+        var url = localStorage.getItem('bkUrl');
         // 在原生环境中
         mui.plusReady(function () {
-            debugger
             var dataType = plus.webview.currentWebview().dataType;
 
         });
@@ -166,7 +166,6 @@
         }
 
         var btns = $('.btn'); //'{"begin_date":"2018-07-13","end_date":"2018-08-20","user_id":"1","exchange_type":"油信宝","data_type":"2"}';
-        debugger
         var dataTimeParams = {
             "begin_date": beforeThirtyDate,
             "end_date": nowDate,
@@ -188,7 +187,6 @@
         var startDateTime = '';
         var endDateTime = '';
         $('.btn-start')[0].addEventListener('click', function () {
-            debugger
             var _self = this;
             if (_self.picker) {
                 _self.picker.show(function (rs) {
@@ -456,7 +454,7 @@
             $.ajax({
                 type: 'post',
                 // url:'http://192.168.10.23:9000/Yxb/Check_Amount',
-                url: 'http://192.168.10.23:8080/hdptms/SaleStationDataInfo',
+                url: url+'hdptms/SaleStationDataInfo',
                 dateType: 'json',
                 data: { // data_type:1 全部
                     // params: '{"begin_date":"2018-07-13","end_date":"2018-08-20","user_id":"1","exchange_type":"油信宝","data_type":"2"}'

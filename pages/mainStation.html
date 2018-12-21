@@ -86,6 +86,7 @@
 <script>
     $(function () {
         mui.init();
+        var url = localStorage.getItem('bkUrl');
         //普通示例
         var userPicker = new mui.PopPicker();
         var stationId = '';
@@ -160,7 +161,8 @@
         $.ajax({
             type: 'post',
             // url:'http://192.168.10.23:9000/Yxb/Check_Amount',
-            url: 'http://192.168.10.23:8080/hdptms/GetStationList',
+            // url: 'http://192.168.10.23:8080/hdptms/GetStationList',
+            url: url + 'hdptms/GetStationList',
             dateType: 'json',
             data: { // 省份ID
                 params: '{"province_id":"1"}'
@@ -264,7 +266,6 @@
                     var dateTimeStr = rs.text.split('-');
                     console.log(dateTimeStr)
                     endDateTime = new Date(dateTimeStr[0], dateTimeStr[1], dateTimeStr[2]);
-                    debugger
                     if(dataTimeParams.end_date!=''&&dataTimeParams.begin_date!=''){
                         showTablePicData(JSON.stringify(dataTimeParams)); // 日期区间查询柱状图
                     }
@@ -300,7 +301,6 @@
                     // var params= {"begin_date":"","end_date":"","user_id":"1","exchange_type":"油信宝","data_type":"2"};
                     dataTimeParams.begin_date = rs.text;
                     paramPie.begin_date = rs.text;
-                    debugger
                     var dateTimeStr = rs.text.split('-');
                     console.log(dateTimeStr)
                     endDateTime = new Date(dateTimeStr[0], dateTimeStr[1], dateTimeStr[2]);
@@ -308,7 +308,6 @@
                     paramPie.end_date = '';
                     // $(_self).next().children('.clear-btn').click();
                     $(_self).next().children('.show-date').text('');
-                    debugger
                     if(dataTimeParams.end_date!=''&&dataTimeParams.begin_date!=''){
                         showTablePicData(JSON.stringify(dataTimeParams)); // 日期区间查询柱状图
                     }
@@ -396,7 +395,6 @@
                     var dateTimeStr = rs.text.split('-');
                     console.log(dateTimeStr);
                     startDateTime = new Date(dateTimeStr[0], dateTimeStr[1], dateTimeStr[2]);
-                    debugger
                     if(dataTimeParams.end_date!=''&&dataTimeParams.begin_date!=''){
                         showTablePicData(JSON.stringify(dataTimeParams)); // 日期区间查询柱状图
                     }
@@ -788,7 +786,7 @@
             $.ajax({
                 type: 'post',
                 // url:'http://192.168.10.23:9000/Yxb/Check_Amount',
-                url: 'http://192.168.10.23:8080/hdptms/SaleStationDataInfo',
+                url: url+'hdptms/SaleStationDataInfo',
                 dateType: 'json',
                 data: { // data_type:1 全部
                     params: params
@@ -861,7 +859,7 @@
         function getPieData(params) {
             $.ajax({
                 type: 'post',
-                url: 'http://192.168.10.23:8080/hdptms/SaleDataInfo',
+                url:  url+ 'hdptms/SaleDataInfo',
                 dateType: 'json',
                 data: { // data_type:4 各个平台总量  油站饼图
                     // params: '{"begin_date":"2018-07-13","end_date":"2018-08-20","station_id":'+ stationId +',"exchange_type":"油信宝","data_type":"4"}'
@@ -924,7 +922,6 @@
                         })
 
                         var totalMoney = 0;
-                        debugger
                         for(var i=0; i<newPieDataArr.length; i++){
                             totalMoney= totalMoney +  new Number(newPieDataArr[i].value);
                         }

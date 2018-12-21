@@ -12,15 +12,15 @@
 		loginInfo = loginInfo || {};
 		loginInfo.account = loginInfo.account || '';
 		loginInfo.password = loginInfo.password || '';
-		if (loginInfo.account.length <= 3) {
+		if (loginInfo.account.length < 3) {
 			return callback('账号最短为 3 个字符');
 		}
-		if (loginInfo.password.length <= 6) {
+		if (loginInfo.password.length < 6) {
 			return callback('密码最短为 6 个字符');
 		}
 		// var users = JSON.parse(localStorage.getItem('$users') || '[]');
 
-
+		localStorage.setItem('bkUrl','http://192.168.10.23:8080/');
 
         Jquery.ajax({
             type:'post',
@@ -200,6 +200,5 @@
 			}
 		}
 	},
-
     owner.URL='http://192.168.10.23:8080/'
 }(mui, window.app = {},$));

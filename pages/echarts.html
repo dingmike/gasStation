@@ -64,7 +64,8 @@
         </li>
     </ul>
     <div class="mui-content-padded">
-        <h5>油信宝</h5>
+        <h5 class="station-name">油信宝</h5>
+        <p>销售额: <span class="totalMoney"></span></p>
         <div class="chart" id="barChart"></div>
         <!--  <h5>线图示例</h5>
           <div class="chart" id="lineChart"></div>
@@ -84,7 +85,7 @@
 
     $(function () {
         mui.init();
-
+        var url = localStorage.getItem('bkUrl');
         // 在原生环境中
         mui.plusReady(function () {
             debugger
@@ -106,10 +107,9 @@
         $('.my-title').text(dataType + '数据');
         $('title').text(dataType + '数据');
 
-
+        $('.station-name').text(dataType);
         // 默认时间段一个月 当天开始
         //获取当前时间，格式YYYY-MM-DD
-        debugger
 
         function getNowFormatDate() {
             var date = new Date();
@@ -183,7 +183,6 @@
             "exchange_type": dataType,
             "data_type": "2"
         };
-        debugger
         if (beginDate) {
             dataTimeParams = {
                 "begin_date": beginDate,
@@ -197,7 +196,6 @@
         var startDateTime = '';
         var endDateTime = '';
         $('.btn-start')[0].addEventListener('click', function () {
-            debugger
             var _self = this;
             if (_self.picker) {
                 _self.picker.show(function (rs) {
@@ -331,7 +329,6 @@
 
         var getOption = function (chartType, barChatData, chartMouth, plateName) {
 
-            debugger
             var chartOption = chartType == 'pie' ? {
                 calculable: false,
                 series: [{
@@ -468,14 +465,13 @@
             $.ajax({
                 type: 'post',
                 // url:'http://192.168.10.23:9000/Yxb/Check_Amount',
-                url: 'http://192.168.10.23:8080/hdptms/SaleDataInfo',
+                url: url+'hdptms/SaleDataInfo',
                 dateType: 'json',
                 data: { // data_type:1 全部
                     // params: '{"begin_date":"2018-07-13","end_date":"2018-08-20","user_id":"1","exchange_type":"油信宝","data_type":"2"}'
                     params: params
                 },
                 success: function (res) {
-                    debugger
                     console.log(res);
                     var resJsonStr = JSON.parse(res);
 
@@ -525,6 +521,11 @@
                         };
                         var barChart = echarts.init(byId('barChart'));
                         barChart.setOption(getOption('bar', barChatData, mouths, dataName));
+                        var totalMoney=0;
+                        for(var i=0; i<barChatData[0].data.length; i++){
+                            totalMoney= totalMoney +  new Number(barChatData[0].data[i]);
+                        }
+                        $('.totalMoney').text(totalMoney.toFixed(2))
                     }else{
                         // mui.alert('暂时没有数据！');
                         var byId = function (id) {

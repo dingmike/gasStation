@@ -144,7 +144,7 @@
         $$.init({
             statusBarBackground: '#f7f7f7'
         });
-        $.ajax({
+        /*$.ajax({
             type:'post',
             // url:'http://192.168.10.23:9000/Yxb/Check_Amount',
             url:'http://192.168.10.23:8080/hdptms/SaleDataInfo',
@@ -155,7 +155,7 @@
             success:function(res){
                 console.log(res);
             }
-        });
+        });*/
 
        /* $$.ajax('http://192.168.10.23:8080/hdptms/SaleDataInfo',{
             data:{
@@ -192,8 +192,6 @@
                 console.log(xhr);
             }
         });*/
-
-
 
 
         $$.plusReady(function () {
@@ -306,7 +304,7 @@
                     password: passwordBox.value
                 };
                 app.login(loginInfo, function (data) {
-                    debugger
+
                     if (data.RESULT==0) {
                         toMain();
                     }else{
