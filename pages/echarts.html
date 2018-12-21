@@ -208,7 +208,7 @@
                     var dateTimeStr = rs.text.split('-');
                     dataTimeParams.end_date = '';//清空endDate
                     console.log(dateTimeStr)
-                    endDateTime = new Date(dateTimeStr[0], dateTimeStr[1], dateTimeStr[2]);
+                    endDateTime = new Date(dateTimeStr[0], dateTimeStr[1]-1, dateTimeStr[2]);
                     showTablePicData(JSON.stringify(dataTimeParams))
                 });
             } else {
@@ -331,6 +331,15 @@
 
             var chartOption = chartType == 'pie' ? {
                 calculable: false,
+                noDataLoadingOption: {
+                    text: '无数据',
+                    effect: 'bubble',
+                    effectOption: {
+                        effect: {
+                            n: 0
+                        }
+                    }
+                },
                 series: [{
                     name: '访问来源',
                     type: 'pie',
@@ -369,6 +378,15 @@
                     x2: 30,// 右边坐标系
                     y: 30,
                     y2: 25
+                },
+                noDataLoadingOption: {
+                    text: '无数据',
+                    effect: 'bubble',
+                    effectOption: {
+                        effect: {
+                            n: 0
+                        }
+                    }
                 },
                 axisPointer: {
                     link: {xAxisIndex: 'all'},

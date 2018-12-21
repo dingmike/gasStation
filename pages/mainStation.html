@@ -257,7 +257,7 @@
                     paramPie.end_date = '';
                     var dateTimeStr = rs.text.split('-');
                     console.log(dateTimeStr)
-                    endDateTime = new Date(dateTimeStr[0], dateTimeStr[1], dateTimeStr[2]);
+                    endDateTime = new Date(dateTimeStr[0], dateTimeStr[1]-1, dateTimeStr[2]);
                     if(dataTimeParams.end_date!=''&&dataTimeParams.begin_date!=''){
                         showTablePicData(JSON.stringify(dataTimeParams)); // 日期区间查询柱状图
                     }
@@ -430,6 +430,15 @@
                         fontSize: 10
                     },
                 },
+                noDataLoadingOption: {
+                    text: '无数据',
+                    effect: 'bubble',
+                    effectOption: {
+                        effect: {
+                            n: 0
+                        }
+                    }
+                },
                 series: [{
                     name: '数据汇总',
                     type: 'pie',
@@ -484,64 +493,7 @@
                         },
                         labelLine: {show: true},
 
-                    },
-                    /*      label: {
-                              show:true,
-                              normal: {
-                                  labelLine :{show:true},
-                                  formatter: '{a|{a}}{abg|}\n{hr|}\n  {b|{b}：}{c}  {per|{d}%}  ',
-                                  backgroundColor: '#eee',
-                                  borderColor: '#aaa',
-                                  borderWidth: 1,
-                                  borderRadius: 4,
-                                  // shadowBlur:3,
-                                  // shadowOffsetX: 2,
-                                  // shadowOffsetY: 2,
-                                  // shadowColor: '#999',
-                                  // padding: [0, 7],
-                                  rich: {
-                                      a: {
-                                          color: '#999',
-                                          lineHeight: 20,
-                                          align: 'center',
-                                          fontSize: 10
-                                      },
-                                      // abg: {
-                                      //     backgroundColor: '#333',
-                                      //     width: '100%',
-                                      //     align: 'right',
-                                      //     height: 22,
-                                      //     borderRadius: [4, 4, 0, 0]
-                                      // },
-                                      hr: {
-                                          borderColor: '#aaa',
-                                          width: '100%',
-                                          borderWidth: 0.5,
-                                          height: 0
-                                      },
-                                      b: {
-                                          fontSize: 10,
-                                          lineHeight: 20
-                                      },
-                                      per: {
-                                          color: '#eee',
-                                          backgroundColor: '#334455',
-                                          padding: [2, 4],
-                                          borderRadius: 2
-                                      }
-                                  }
-                              }
-                          },*/
-                    /*data: [{
-                        value: 452,
-                        name: '油信宝'
-                    }, {
-                        value: 310,
-                        name: '微信'
-                    }, {
-                        value: 125,
-                        name: '车友网'
-                    }]*/
+                    }
                 }]
             } : {
                 legend: {
@@ -559,6 +511,15 @@
                     x2: 30,// 右边坐标系
                     y: 30,
                     y2: 25
+                },
+                noDataLoadingOption: {
+                    text: '无数据',
+                    effect: 'bubble',
+                    effectOption: {
+                        effect: {
+                            n: 0
+                        }
+                    }
                 },
                 axisPointer: {
                     link: {xAxisIndex: 'all'},
@@ -655,6 +616,15 @@
                         color: '#000',
                         fontSize: 10
                     },
+                },
+                noDataLoadingOption: {
+                    text: '无数据',
+                    effect: 'bubble',
+                    effectOption: {
+                        effect: {
+                            n: 0
+                        }
+                    }
                 },
                 series: [{
                     name: '数据汇总',
