@@ -137,13 +137,60 @@
 </div>
 <script src="js/mui.min.js"></script>
 <script src="js/jquery-3.3.1.js"></script>
-<script src="js/mui.enterfocus.js"></script>
+<!--<script src="js/mui.enterfocus.js"></script>-->
 <script src="js/app.js"></script>
 <script>
     (function ($$, doc, $) {
         $$.init({
             statusBarBackground: '#f7f7f7'
         });
+
+        $('#login').on('click',function () {
+            localStorage.setItem('bkUrl','http://192.168.10.23:8080/');
+
+            var url = localStorage.getItem('bkUrl');
+            var loginInfo ={
+                account: $('#account').val(),
+                password: $('#password').val()
+            };
+
+            if (loginInfo.account =='') {
+                mui.alert('账号必填');
+                return
+            }
+            if (loginInfo.password =='') {
+                mui.alert('密码必填');
+                return
+            }
+
+            if (loginInfo.account.length < 3) {
+                mui.alert('账号最短为 3 个字符');
+                return
+            }
+            if (loginInfo.password.length < 6) {
+                mui.alert('密码最短为 6 个字符');
+                return
+            }
+            $.ajax({
+                type:'post',
+                // url:'http://192.168.10.23:9000/Yxb/Check_Amount',
+                url: url+'hdptms/Login',
+                dateType:'json',
+                data:{
+                    username: loginInfo.account,
+                    password: loginInfo.password
+                },
+                success:function(res){
+                    console.log(res);
+                    window.location.href = "main.html";
+                },
+                error:function(xhr,type,errorThrown){
+                    //异常处理；
+                    console.log(type);
+                }
+            })
+        })
+
         /*$.ajax({
             type:'post',
             // url:'http://192.168.10.23:9000/Yxb/Check_Amount',
@@ -157,44 +204,7 @@
             }
         });*/
 
-       /* $$.ajax('http://192.168.10.23:8080/hdptms/SaleDataInfo',{
-            data:{
-                params:'{"begin_date":"2018-07-13","end_date":"2018-07-14","user_id":"1","exchange_type":"油信宝"}'
-            },
-            dataType:'json',//服务器返回json格式数据
-            type:'post',//HTTP请求类型
-            timeout:10000,//超时时间设置为10秒；
-            withCredentials: false,//
-            headers:{'Content-Type':'application/json'},
-            success:function(data){
-                debugger
-                return callback(data);
-                /!*  if(data.RESULT==0){ // 成功
-
-                      var authed = users.some(function(user) {
-                          return loginInfo.account == user.account && loginInfo.password == user.password;
-                      });
-                      if (authed) {
-                          return owner.createState(loginInfo.account, callback);
-                      } else {
-                          return callback('用户名或密码错误');
-                      }
-
-                   //  location.href="index.html";
-
-
-                  }*!/
-                //服务器返回响应，根据响应结果，分析是否登录成功；
-            },
-            error:function(xhr,type,errorThrown){
-                //异常处理；
-                console.log(type);
-                console.log(xhr);
-            }
-        });*/
-
-
-        $$.plusReady(function () {
+/*        $$.plusReady(function () {
             plus.screen.lockOrientation("portrait-primary");
             var settings = app.getSettings();
             var state = app.getState();
@@ -304,7 +314,7 @@
                     password: passwordBox.value
                 };
                 app.login(loginInfo, function (data) {
-
+                    debugger
                     if (data.RESULT==0) {
                         toMain();
                     }else{
@@ -376,7 +386,10 @@
                 }, 1000);
                 return false;
             };
-        });
+        });*/
+
+
+
     }(mui, document,$));
 </script>
 </body>
