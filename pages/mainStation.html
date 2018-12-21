@@ -35,7 +35,7 @@
 </head>
 
 <body>
-<header class="mui-bar">
+<header class="mui-bar mui-bar-nav">
     <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
     <h1 class="mui-title">油站数据</h1>
 </header>
@@ -150,9 +150,6 @@
             "data_type": "4"
         };
 
-
-
-
         //http://192.168.10.23:8080/hdptms/GetStationList?params={"province_id":"1"}
         $.ajax({
             type: 'post',
@@ -171,7 +168,6 @@
                 userPicker.setData(res);
                 var showUserPickerButton = document.getElementById('showUserPicker');
                 var userResult = document.getElementById('userResult');
-
                 //请求完油站信息列表后加载默认数据 默认第一个
                 $('.station-name').text(res[1].text);
                 $('.start-date').text(beforeThirtyDate);

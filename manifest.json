@@ -130,13 +130,14 @@
                         "spotlight-retina7" : "", /*可选，80x80，iPad iOS7高分屏Spotlight搜索程序图标*/
                         "settings-normal" : "", /*可选，29x29，iPad设置页面程序图标*/
                         "settings-retina" : ""
-                    }
+                    },
+                    "appstore" : "C:/Users/admin/Desktop/zsylogo-login.png"
                 },
                 "android" : {
-                    "mdpi" : "", /*必选，48x48，普通屏程序图标*/
-                    "ldpi" : "", /*必选，48x48，大屏程序图标*/
-                    "hdpi" : "", /*必选，72x72，高分屏程序图标*/
-                    "xhdpi" : "", /*必选，96x96，720P高分屏程序图标*/
+                    "mdpi" : "C:/Users/admin/Desktop/zsylogo-login.png", /*必选，48x48，普通屏程序图标*/
+                    "ldpi" : "C:/Users/admin/Desktop/zsylogo-login.png", /*必选，48x48，大屏程序图标*/
+                    "hdpi" : "C:/Users/admin/Desktop/zsylogo-login.png", /*必选，72x72，高分屏程序图标*/
+                    "xhdpi" : "C:/Users/admin/Desktop/zsylogo-login.png", /*必选，96x96，720P高分屏程序图标*/
                     "xxhdpi" : ""
                 }
             },
