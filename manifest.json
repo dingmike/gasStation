@@ -1,7 +1,7 @@
 {
     "@platforms" : [ "android", "iPhone", "iPad" ],
     "id" : "H512A924B", /*必选，应用的标识*/
-    "name" : "qypttj", /*必选，应用名称*/
+    "name" : "数据统计", /*必选，应用名称*/
     "version" : {
         "name" : "1.0", /*必选，版本名称*/
         "code" : ""
@@ -48,7 +48,7 @@
         "popGesture" : "close", /*设置应用默认侧滑返回关闭Webview窗口，none为无侧滑返回功能，hide为侧滑隐藏Webview窗口。参考ask.dcloud.net.cn/article/102*/
         "splashscreen" : {
             "autoclose" : false, /*如果为true，程序启动的图片可以自动关闭，如果为false，开发者需要手动关闭*/
-            "waiting" : true
+            "waiting" : false
         },
         "runmode" : "normal", /*两个值，liberate或normal，前者在应用安装时释放资源，后者不需要释放资源*/
         "signature" : "Sk9JTiBVUyBtYWlsdG86aHIyMDEzQGRjbG91ZC5pbw==", /*可选，保留给应用签名，暂不使用*/
@@ -138,7 +138,7 @@
                     "ldpi" : "C:/Users/admin/Desktop/zsylogo-login.png", /*必选，48x48，大屏程序图标*/
                     "hdpi" : "C:/Users/admin/Desktop/zsylogo-login.png", /*必选，72x72，高分屏程序图标*/
                     "xhdpi" : "C:/Users/admin/Desktop/zsylogo-login.png", /*必选，96x96，720P高分屏程序图标*/
-                    "xxhdpi" : ""
+                    "xxhdpi" : "C:/Users/admin/Desktop/zsylogo-login.png"
                 }
             },
             "splashscreen" : {

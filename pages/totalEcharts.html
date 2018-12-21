@@ -176,11 +176,11 @@
                     dataTimeParams.begin_date = rs.text;
                     pieParams.begin_date = rs.text;
                     var dateTimeStr = rs.text.split('-');
-                    console.log(dateTimeStr)
+                    console.log(dateTimeStr);
                     dataTimeParams.end_date = '';//清空endDate
-                    debugger
                     pieParams.end_date = '';//清空endDate
                     endDateTime = new Date(dateTimeStr[0], dateTimeStr[1], dateTimeStr[2]);
+                    console.log(endDateTime)
                     // showTablePicData(JSON.stringify(dataTimeParams));
                     if (dataTimeParams.end_date != '' && dataTimeParams.begin_date != '') {
                         showTablePicData(JSON.stringify(dataTimeParams)); // 日期区间查询柱状图
@@ -220,7 +220,8 @@
                     dataTimeParams.end_date = '';//清空endDate
                     debugger
                     pieParams.end_date = '';//清空endDate
-                    endDateTime = new Date(dateTimeStr[0], dateTimeStr[1], dateTimeStr[2]);
+                    endDateTime = new Date(dateTimeStr[0], dateTimeStr[1]-1, dateTimeStr[2]);
+                    console.log(endDateTime)
                     dataTimeParams.end_date = '';//清空endDate
                     // $(_self).next().children('.clear-btn').click();
                     $(_self).next().children('.show-date').text('');
@@ -275,7 +276,10 @@
                     console.log(dateTimeStr)
                     // dataTimeParams.begin_date_date = '';//清空beginDate
                     // pieParams.begin_date = '';//清空beginDate
+                    console.log( dateTimeStr[1])
+                    console.log( dateTimeStr[2])
                     startDateTime = new Date(dateTimeStr[0], dateTimeStr[1], dateTimeStr[2]);
+
                     if (dataTimeParams.end_date != '' && dataTimeParams.begin_date != '') {
                         showTablePicData(JSON.stringify(dataTimeParams)); // 日期区间查询柱状图
                     }
@@ -313,6 +317,8 @@
                     pieParams.end_date = rs.text;
                     var dateTimeStr = rs.text.split('-');
                     console.log(dateTimeStr)
+                    console.log( dateTimeStr[1])
+                    console.log( dateTimeStr[2])
                     // dataTimeParams.begin_date = '';//清空beginDate
                     // pieParams.begin_date = '';//清空beginDate
                     startDateTime = new Date(dateTimeStr[0], dateTimeStr[1], dateTimeStr[2]);
@@ -362,6 +368,15 @@
                         fontSize: 10
                     },
                 },
+                    noDataLoadingOption: {
+                        text: '无数据',
+                        effect: 'bubble',
+                        effectOption: {
+                            effect: {
+                                n: 0
+                            }
+                        }
+                    },
                 series: [{
                     name: '数据汇总',
                     type: 'pie',
@@ -427,6 +442,15 @@
                         fontSize: 12,
                         color: '#06B800',
                         backgroundColor: '#06B800'
+                    }
+                },
+                noDataLoadingOption: {
+                    text: '无数据',
+                    effect: 'bubble',
+                    effectOption: {
+                        effect: {
+                            n: 0
+                        }
                     }
                 },
                 grid: {
@@ -516,7 +540,6 @@
         };
 
         var getOptionOfPie = function (pieData) {
-            debugger
             var chartOption = {
                 calculable: false,
                 tooltip: {
@@ -530,6 +553,15 @@
                         color: '#000',
                         fontSize: 10
                     },
+                },
+                noDataLoadingOption: {
+                    text: '无数据',
+                    effect: 'bubble',
+                    effectOption: {
+                        effect: {
+                            n: 0
+                        }
+                    }
                 },
                 series: [{
                     name: '数据汇总',
@@ -664,7 +696,7 @@
                         var barChart = echarts.init(byId('barChart'));
                         barChart.setOption(getOption('bar', barChatData, mouths, dataName));
                     } else {
-
+                        $('.totalMoney').text('');
                         var byId = function (id) {
                             return document.getElementById(id);
                         };

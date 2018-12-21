@@ -414,6 +414,7 @@
             event.stopPropagation();//阻止事件冒泡即可
             $(this).parent().children('.show-date').text('');
             $(this).hide();
+            $('.totalMoney').text('');
         });
         var getOption = function (chartType, barChatData, chartMouth, plateName) {
             var chartOption = chartType == 'pie' ? {
@@ -602,7 +603,6 @@
         };
         // 饼图配置
         var getOptionOfPie = function (pieData) {
-            debugger
             var chartOption = {
                 calculable: false,
                 tooltip: {
@@ -681,63 +681,6 @@
                         labelLine: {show: true},
 
                     },
-                    /*      label: {
-                              show:true,
-                              normal: {
-                                  labelLine :{show:true},
-                                  formatter: '{a|{a}}{abg|}\n{hr|}\n  {b|{b}：}{c}  {per|{d}%}  ',
-                                  backgroundColor: '#eee',
-                                  borderColor: '#aaa',
-                                  borderWidth: 1,
-                                  borderRadius: 4,
-                                  // shadowBlur:3,
-                                  // shadowOffsetX: 2,
-                                  // shadowOffsetY: 2,
-                                  // shadowColor: '#999',
-                                  // padding: [0, 7],
-                                  rich: {
-                                      a: {
-                                          color: '#999',
-                                          lineHeight: 20,
-                                          align: 'center',
-                                          fontSize: 10
-                                      },
-                                      // abg: {
-                                      //     backgroundColor: '#333',
-                                      //     width: '100%',
-                                      //     align: 'right',
-                                      //     height: 22,
-                                      //     borderRadius: [4, 4, 0, 0]
-                                      // },
-                                      hr: {
-                                          borderColor: '#aaa',
-                                          width: '100%',
-                                          borderWidth: 0.5,
-                                          height: 0
-                                      },
-                                      b: {
-                                          fontSize: 10,
-                                          lineHeight: 20
-                                      },
-                                      per: {
-                                          color: '#eee',
-                                          backgroundColor: '#334455',
-                                          padding: [2, 4],
-                                          borderRadius: 2
-                                      }
-                                  }
-                              }
-                          },*/
-                    /*data: [{
-                        value: 452,
-                        name: '油信宝'
-                    }, {
-                        value: 310,
-                        name: '微信'
-                    }, {
-                        value: 125,
-                        name: '车友网'
-                    }]*/
                     data: pieData
                 }]
             }
@@ -805,6 +748,7 @@
                         var barChart = echarts.init(byId('barChart'));
                         barChart.setOption(getOption('bar', barChatData, mouths, dataName));
                     } else {
+                        $('.totalMoney').text('');
                         // mui.alert('暂时没有数据！');
                         // var chartData = {mouths: mouths, exchageAmount: exchageAmount, plateName: plateName};
                         var byId = function (id) {
@@ -821,7 +765,7 @@
         function getPieData(params) {
             $.ajax({
                 type: 'post',
-                url:  url+ 'hdptms/SaleDataInfo',
+                url:  url+ 'hdptms/SaleStationDataInfo',
                 dateType: 'json',
                 data: { // data_type:4 各个平台总量  油站饼图
                     // params: '{"begin_date":"2018-07-13","end_date":"2018-08-20","station_id":'+ stationId +',"exchange_type":"油信宝","data_type":"4"}'
@@ -891,6 +835,7 @@
 
                     }else{
                         // 饼图
+                        $('.totalMoney').text('');
                         var byId = function (id) {
                             return document.getElementById(id);
                         };
