@@ -144,12 +144,15 @@
         $$.init({
             statusBarBackground: '#f7f7f7'
         });
-
+        var login_status=localStorage.getItem('login_status');//获取登录状态
+        if(login_status){
+            window.location.href = "main.html";
+            return;
+        }
         $('#login').on('click',function () {
             // localStorage.setItem('bkUrl','http://192.168.10.23:8080/');
             // localStorage.setItem('bkUrl','http://47.98.39.0:9000/');
             localStorage.setItem('bkUrl','http://www.youxinbao.com.cn:8080/');
-
             var url = localStorage.getItem('bkUrl');
             var loginInfo ={
                 account: $('#account').val(),
@@ -183,8 +186,16 @@
                     password: loginInfo.password
                 },
                 success:function(res){
+                    res=$.parseJSON(res);
                     console.log(res);
-                    window.location.href = "main.html";
+                    if(res.RESULT==0){
+                        localStorage.setItem('login_status','1');
+                        window.location.href = "main.html";
+                    }else{
+                        localStorage.setItem('login_status','0');
+                        mui.alert('用户名或密码错误');
+                        return
+                    }
                 },
                 error:function(xhr,type,errorThrown){
                     //异常处理；

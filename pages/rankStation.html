@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>油站汇总数据</title>
+    <title>油站排行数据</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -37,7 +37,7 @@
 <body>
 <header class="mui-bar mui-bar-nav">
     <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-    <h1 class="mui-title">油站数据</h1>
+    <h1 class="mui-title">油站排行数据</h1>
 </header>
 <div class="mui-content">
     <!--<p style="text-indent: 22px;">
@@ -48,7 +48,7 @@
     <ul class="mui-table-view mui-table-view-chevron">
         <!--<button id='showUserPicker' class="mui-btn mui-btn-block" type='button'>选择油站</button>-->
         <li class="mui-table-view-cell" id='showUserPicker'>
-            选择油站: &nbsp;&nbsp;<span class="show-station station-name"></span>
+            选择排名: &nbsp;&nbsp;<span class="show-station station-name"></span>
             <span class="mui-navigate-right"></span>
         </li>
         <li class="mui-table-view-cell btn-start" data-options='{"type":"date","value":"2018-07-13"}'>
@@ -67,13 +67,8 @@
         </li>
     </ul>
     <div class="mui-content-padded">
-        <h5 class="station-name">油站</h5>
-        <p>销售额：<span class="totalMoney"></span></p>
+        <h5 class="station-name">油站销售排行</h5>
         <div class="chart" id="barChart"></div>
-        <!--        <h5>线图示例</h5>
-                <div class="chart" id="lineChart"></div>-->
-        <h5>数据分布</h5>
-        <div class="chart" id="pieChart"></div>
     </div>
 </div>
 <script src="../js/mui.min.js"></script>
@@ -87,11 +82,8 @@
     $(function () {
         mui.init();
         var url = localStorage.getItem('bkUrl');
-        //var url = 'http://192.168.10.23:8080/';
         //普通示例
         var userPicker = new mui.PopPicker();
-        var stationId = '';
-        var stationName = '';
         // 默认时间段一个月 当天开始
         //获取当前时间，格式YYYY-MM-DD
         function getNowFormatDate() {
@@ -128,145 +120,60 @@
 
         var nowDate = getNowFormatDate();
         var beforeThirtyDate = getAfterThirtyFormatDate();
-       /* var dataTimeParams = {
-            "begin_date": beforeThirtyDate,
-            "end_date": nowDate,
-            "station_id": stationId,
-            "exchange_type": "油信宝",
-            "data_type": "2"
-        };*/
         var dataTimeParams = {
             "begin_date": beforeThirtyDate,
             "end_date": nowDate,
-            // "end_date": "3434",
-            "station_id": stationId,
-            "exchange_type": "油信宝",
-            "data_type": "3"
-        };
-        var paramPie = {
-            "begin_date": beforeThirtyDate,
-            "end_date": nowDate,
-            "station_id": stationId,
-            "exchange_type": "油信宝",
-            "data_type": "4"
+            "rank_count":"10",// 排名
         };
 
-        //http://192.168.10.23:8080/hdptms/GetStationList?params={"province_id":"1"}
-        $.ajax({
-            type: 'post',
-            // url:'http://192.168.10.23:9000/Yxb/Check_Amount',
-            // url: 'http://192.168.10.23:8080/hdptms/GetStationList',
-            url: url + 'hdptms/GetStationList',
-            dateType: 'json',
-            data: { // 省份ID
-                params: '{"province_id":"1"}'
-            },
-            success: function (res) {
-                console.log(res);
-                var resJsonStr = JSON.parse(res);
-                res = resJsonStr.data[0].station_list;
-                console.log(res)
-                userPicker.setData(res);
-                var showUserPickerButton = document.getElementById('showUserPicker');
-                var userResult = document.getElementById('userResult');
-                //请求完油站信息列表后加载默认数据 默认第一个
-                $('.station-name').text(res[1].text);
-                $('.start-date').text(beforeThirtyDate);
-                $('.end-date').text(nowDate);
-                stationId = res[1].value;
-                stationName = res[1].text;
-                 dataTimeParams = {
-                    "begin_date": beforeThirtyDate,
-                    "end_date": nowDate,
-                    "station_id": res[1].value,// 南山加油站
-                    "exchange_type": "油信宝",
-                    "data_type": "3"
-                };
-                 paramPie = {
-                    "begin_date": beforeThirtyDate,
-                    "end_date": nowDate,
-                    "station_id": res[1].value,
-                    "exchange_type": "油信宝",
-                    "data_type": "4"
-                };
-
-                showTablePicData(JSON.stringify(dataTimeParams));
-                getPieData(JSON.stringify(paramPie)); //  根据ID查油站饼图信息
-                showUserPickerButton.addEventListener('tap', function (event) {
-                    userPicker.show(function (items) {
-                        //选择了油站清除日期区间恢复默认
-                        $('.start-date').text(beforeThirtyDate);
-                        $('.end-date').text(nowDate);
-
-                        console.log(items[0].value)
-                        console.log(items[0])
-                        $('.show-station').text(items[0].text);
-                        $('.station-name').text(items[0].text);
-                        stationId = items[0].value;
-                        stationName = items[0].text;
-                        dataTimeParams = {
-                            "begin_date": beforeThirtyDate,
-                            "end_date": nowDate,
-                            "station_id": items[0].value.toString(),
-                            "exchange_type": "油信宝",
-                            "data_type": "3"
-                        };
-                        showTablePicData(JSON.stringify(dataTimeParams));// 根据ID查油站柱状图信息
-                        paramPie = {
-                            "begin_date": beforeThirtyDate,
-                            "end_date": nowDate,
-                            "station_id": items[0].value.toString(),
-                            "exchange_type": "油信宝",
-                            "data_type": "4"
-                        };
-                        getPieData(JSON.stringify(paramPie)); //  根据ID查油站饼图信息
-                        //返回 false 可以阻止选择框的关闭
-                        //return false;
-                    });
-                }, false);
-            }
-        });
-
+        //页面加载初始数据
+				var res='{"code":"0","data":[{"rank_list":[{"text":"前五","value":"5"},{"text":"前十","value":"10"},{"text":"前二十","value":"20"}]}]}';
+        var resJsonStr = JSON.parse(res);
+        res = resJsonStr.data[0].rank_list;
+				userPicker.setData(res);
+				$('.show-station').text(res[1].text);
+				var showUserPickerButton = document.getElementById('showUserPicker');
+				$('.start-date').text(beforeThirtyDate);
+				$('.end-date').text(nowDate);
+				dataTimeParams = {
+						"begin_date": beforeThirtyDate,
+						"end_date": nowDate,
+						"rank_count": res[1].value,// 排名
+				};
+				showTablePicData(JSON.stringify(dataTimeParams));
+				showUserPickerButton.addEventListener('tap', function (event) {
+									userPicker.show(function (items) {
+											//选择了油站清除日期区间恢复默认
+											$('.start-date').text(beforeThirtyDate);
+											$('.end-date').text(nowDate);
+											$('.show-station').text(items[0].text);
+											dataTimeParams = {
+													"begin_date": beforeThirtyDate,
+													"end_date": nowDate,
+													"rank_count": items[0].value.toString(),
+											};
+											showTablePicData(JSON.stringify(dataTimeParams));// 根据排名条件查油站排行柱状图信息
+									});
+				}, false);
+				
         var btns = $('.btn'); //'{"begin_date":"2018-07-13","end_date":"2018-08-20","user_id":"1","exchange_type":"油信宝","data_type":"2"}';
         var startDateTime = '';
         var endDateTime = '';
         $('.btn-start')[0].addEventListener('click', function () {
-           /* var dataTimeParams = {
-                "begin_date": beforeThirtyDate,
-                // "end_date": nowDate,
-                "end_date": "3434",
-                "station_id": stationId,
-                "exchange_type": "油信宝",
-                "data_type": "2"
-            };
-            var paramPie = {
-                "begin_date": beforeThirtyDate,
-                "end_date": nowDate,
-                "station_id": stationId,
-                "exchange_type": "油信宝",
-                "data_type": "4"
-            };*/
             var _self = this;
             if (_self.picker) {
                 _self.picker.show(function (rs) {
                     var clearBtn = $(_self).children().first().next().next('button');
                     $(_self).children().first().text(rs.text).next().next('button').show();
-                    // var params= {"begin_date":'',"end_date":"","user_id":"1","exchange_type":"油信宝","data_type":"2"};
                     dataTimeParams.begin_date = rs.text;
                     paramPie.begin_date = rs.text;
                     dataTimeParams.end_date = '';
                     paramPie.end_date = '';
                     var dateTimeStr = rs.text.split('-');
-                    console.log(dateTimeStr)
                     endDateTime = new Date(dateTimeStr[0], dateTimeStr[1]-1, dateTimeStr[2]);
                     if(dataTimeParams.end_date!=''&&dataTimeParams.begin_date!=''){
                         showTablePicData(JSON.stringify(dataTimeParams)); // 日期区间查询柱状图
                     }
-                    if(paramPie.end_date!=''&&paramPie.begin_date!=''){
-                        getPieData(JSON.stringify(paramPie)); //  日期区间查油站饼图信息
-                    }
-                    // _self.picker.dispose();
-                    // _self.picker = null;
                 });
             } else {
                 var optionsJson = this.getAttribute('data-options') || '{}';
@@ -304,9 +211,6 @@
                     if(dataTimeParams.end_date!=''&&dataTimeParams.begin_date!=''){
                         showTablePicData(JSON.stringify(dataTimeParams)); // 日期区间查询柱状图
                     }
-                    if(paramPie.end_date!=''&&paramPie.begin_date!=''){
-                        getPieData(JSON.stringify(paramPie)); //  日期区间查油站饼图信息
-                    }
                     /*
                      * 返回 false 可以阻止选择框的关闭
                      * return false;
@@ -325,39 +229,17 @@
         }, false);
 
         $('.btn-end')[0].addEventListener('click', function () {
-            /*var dataTimeParams = {
-                "begin_date": beforeThirtyDate,
-                "end_date": nowDate,
-                "station_id": stationId,
-                "exchange_type": "油信宝",
-                "data_type": "2"
-            };
-            var paramPie = {
-                "begin_date": beforeThirtyDate,
-                "end_date": nowDate,
-                "station_id": stationId,
-                "exchange_type": "油信宝",
-                "data_type": "4"
-            };*/
             var _self = this;
             if (_self.picker) {
                 _self.picker.show(function (rs) {
                     var clearBtn = $(_self).children().first().next().next('button');
                     $(_self).children().first().text(rs.text).next().next('button').show();
-                    // var params= {"begin_date":"","end_date":"","user_id":"1","exchange_type":"油信宝","data_type":"2"};
                     dataTimeParams.end_date = rs.text;
-                    paramPie.end_date = rs.text;
                     var dateTimeStr = rs.text.split('-');
-                    console.log(dateTimeStr)
                     startDateTime = new Date(dateTimeStr[0], dateTimeStr[1], dateTimeStr[2]);
                     if(dataTimeParams.end_date!=''&&dataTimeParams.begin_date!=''){
                         showTablePicData(JSON.stringify(dataTimeParams)); // 日期区间查询柱状图
                     }
-                    if(paramPie.end_date!=''&&paramPie.begin_date!=''){
-                        getPieData(JSON.stringify(paramPie)); //  日期区间查油站饼图信息
-                    }
-                    // _self.picker.dispose();
-                    // _self.picker = null;
                 });
             } else {
                 var optionsJson = this.getAttribute('data-options') || '{}';
@@ -386,13 +268,9 @@
                     dataTimeParams.end_date = rs.text;
                     paramPie.end_date = rs.text;
                     var dateTimeStr = rs.text.split('-');
-                    console.log(dateTimeStr);
                     startDateTime = new Date(dateTimeStr[0], dateTimeStr[1], dateTimeStr[2]);
                     if(dataTimeParams.end_date!=''&&dataTimeParams.begin_date!=''){
                         showTablePicData(JSON.stringify(dataTimeParams)); // 日期区间查询柱状图
-                    }
-                    if(paramPie.end_date!=''&&paramPie.begin_date!=''){
-                        getPieData(JSON.stringify(paramPie)); //  日期区间查油站饼图信息
                     }
                     /*
                      * 返回 false 可以阻止选择框的关闭
@@ -417,13 +295,13 @@
             $(this).hide();
             $('.totalMoney').text('');
         });
+				//柱状图配置
         var getOption = function (chartType, barChatData, chartMouth, plateName) {
-					debugger
             var chartOption = chartType == 'pie' ? {
                 calculable: false,
                 tooltip: {
                     trigger: 'item',
-                    formatter: "{a}<br/>{b}: {c} ({d}%)",
+                    formatter: "{a}<br/>{d}: {c} ({d}%)",
                     backgroundColor: 'rgba(245, 245, 245, 0.8)',
                     borderWidth: 1,
                     borderColor: '#ccc',
@@ -531,7 +409,7 @@
                     }
                 },
                 tooltip: {
-                    formatter: "日期:{b}<br/>金额:{c}",
+                    formatter: "油站:{b}<br/>金额:{c}",
                     trigger: 'axis',
                     axisPointer: {            // 坐标轴指示器，坐标轴触发有效
                         type: 'line'        // 默认为直线，可选为：'line' | 'shadow' | 'cross'
@@ -604,106 +482,17 @@
             };
             return chartOption;
         };
-        // 饼图配置
-        var getOptionOfPie = function (pieData) {
-            var chartOption = {
-                calculable: false,
-                tooltip: {
-                    trigger: 'item',
-                    formatter: "{a} <br/>{b}: {c} ({d}%)",
-                    backgroundColor: 'rgba(245, 245, 245, 0.8)',
-                    borderWidth: 1,
-                    borderColor: '#ccc',
-                    padding: 2,
-                    textStyle: {
-                        color: '#000',
-                        fontSize: 10
-                    },
-                },
-                noDataLoadingOption: {
-                    text: '无数据',
-                    effect: 'bubble',
-                    effectOption: {
-                        effect: {
-                            n: 0
-                        }
-                    }
-                },
-                series: [{
-                    name: '数据汇总',
-                    type: 'pie',
-                    selectedMode: 'single',
-                    radius: '65%',
-                    center: ['50%', '50%'],
-                    normal: {
-                        label: {
-                            show: true,
-                            labelLine: {show: true},
-                            formatter: '{a|{a}}{abg|}\n{hr|}\n  {b|{b}：}{c}  {per|{d}%}  ',
-                            backgroundColor: '#eee',
-                            borderColor: '#aaa',
-                            borderWidth: 1,
-                            borderRadius: 4,
-                            // shadowBlur:3,
-                            // shadowOffsetX: 2,
-                            // shadowOffsetY: 2,
-                            // shadowColor: '#999',
-                            // padding: [0, 7],
-                            rich: {
-                                a: {
-                                    color: '#999',
-                                    lineHeight: 20,
-                                    align: 'center',
-                                    fontSize: 10
-                                },
-                                // abg: {
-                                //     backgroundColor: '#333',
-                                //     width: '100%',
-                                //     align: 'right',
-                                //     height: 22,
-                                //     borderRadius: [4, 4, 0, 0]
-                                // },
-                                hr: {
-                                    borderColor: '#aaa',
-                                    width: '100%',
-                                    borderWidth: 0.5,
-                                    height: 0
-                                },
-                                b: {
-                                    fontSize: 10,
-                                    lineHeight: 20
-                                },
-                                per: {
-                                    color: '#eee',
-                                    backgroundColor: '#334455',
-                                    padding: [2, 4],
-                                    borderRadius: 2
-                                }
-                            }
-                        },
-                        labelLine: {show: true},
-
-                    },
-                    data: pieData
-                }]
-            }
-            return chartOption;
-        };
-        // 油站柱状图数据
+				// 油站销售排行柱状图数据
         function showTablePicData(params) {
             $.ajax({
                 type: 'post',
-                // url:'http://192.168.10.23:9000/Yxb/Check_Amount',
-                url: url+'hdptms/SaleStationDataInfo',
-                // url: url+'hdptms/SaleDataInfos',
+                url: url+'hdptms/SaleRankStationDataInfo',
                 dateType: 'json',
                 data: { // data_type:1 全部
                     params: params
                 },
                 success: function (res) {
-                    console.log(res);
                     var resJsonStr = JSON.parse(res);
-
                     if (resJsonStr.code == 0) {
                         res = resJsonStr.data[0];
                         var barChatData = [];
@@ -712,7 +501,8 @@
                             if (res[key].length == 0) {
                                 continue;
                             }
-                            var mouths = [];
+                            var ranks = [];
+							var stations=[];
                             var exchageAmount = [];
                             var plateName = '';
 
@@ -730,30 +520,29 @@
                             }
                             dataName.push(keyObj);
                             for (var i = 0; i < res[key].length; i++) {
-                                mouths.push(res[key][i].DATA_CREATE_TIME);
+                                ranks.push(res[key][i].M0005_NAME);
                                 exchageAmount.push(res[key][i].SUM_EXCHANGE_AMOUNT);
-                                plateName = res[key][i].T0004_EXCHANGE_TYPE;
+								stations.push(i+1);
+																
                             }
                             plateObj.data = exchageAmount;
-                            plateObj.name = plateName;
+							plateObj.name=stations;
                             plateObj.type = 'bar';
                             plateObj.itemStyle = {normal: {color: '#06B800'}};
                             barChatData.push(plateObj);
                         }
 
-                        console.log('mouths：' + mouths)
+                        console.log('mouths：' + ranks)
                         console.log(barChatData)
-                        console.log('dataName：' + dataName)
+                        console.log('dataName：' + plateObj)
                         // var chartData = {mouths: mouths, exchageAmount: exchageAmount, plateName: plateName};
                         var byId = function (id) {
                             return document.getElementById(id);
                         };
                         var barChart = echarts.init(byId('barChart'));
-                        barChart.setOption(getOption('bar', barChatData, mouths, dataName));
+                        barChart.setOption(getOption('bar', barChatData, ranks, stations));
                     } else {
                         $('.totalMoney').text('');
-                        // mui.alert('暂时没有数据！');
-                        // var chartData = {mouths: mouths, exchageAmount: exchageAmount, plateName: plateName};
                         var byId = function (id) {
                             return document.getElementById(id);
                         };
@@ -764,109 +553,6 @@
                 }
             });
         }
-        // 获取饼图信息
-        function getPieData(params) {
-            $.ajax({
-                type: 'post',
-                url:  url+ 'hdptms/SaleStationDataInfo',
-                // url:  url+ 'hdptms/SaleDataInfos',
-                dateType: 'json',
-                data: { // data_type:4 各个平台总量  油站饼图
-                    // params: '{"begin_date":"2018-07-13","end_date":"2018-08-20","station_id":'+ stationId +',"exchange_type":"油信宝","data_type":"4"}'
-                    params: params
-                },
-                success: function (res) {
-                    console.log(res);
-                    var resJsonStr = JSON.parse(res);
-                    if (resJsonStr.code == 0) {
-                        res = resJsonStr.data[0];
-                        var pieData = '';
-                        var pieDataArr = [];
-                        for (var key in res) {
-                            pieDataArr.push(res[key]);
-                        }
-                        var newPieDataArr = [];
-                        for (var i = 0; i < pieDataArr.length; i++) {
-                            if(pieDataArr[i].length!=0) {
-                                newPieDataArr.push({
-                                    name: pieDataArr[i][0].T0004_EXCHANGE_TYPE,
-                                    value: pieDataArr[i][0].SUM_EXCHANGE_AMOUNT
-                                })
-                            }
-                        }
-                        console.log(newPieDataArr);
-                        // 饼图
-                        var byId = function (id) {
-                            return document.getElementById(id);
-                        };
-                        var barCharts = echarts.init(byId('pieChart'));
-                        barCharts.setOption(getOptionOfPie(newPieDataArr));
-
-
-                        // 处理点击事件并且跳转到相应的百度搜索页面
-                        barCharts.on('click', function (params) {
-                            // alert("饼图点击事件"+ params.name);
-                            var beginDate = $('.start-date').text();
-                            var endDate = $('.end-date').text();
-                            window.location.href = "stationEcharts.html?dataType=" + params.name + "&stationId=" + stationId + "&stationName=" + stationName + "&beginDate=" + beginDate +"&endDate=" +endDate;
-                            /*mui.openWindow({
-                                url: "echarts.html",
-                                id: 'echarts',
-                                preload: true,
-                                show: {
-                                    aniShow: 'pop-in'
-                                },
-                                extras: {
-                                    dataType: params.name
-                                },
-                                styles: {
-                                    popGesture: 'hide'
-                                },
-                                waiting: {
-                                    autoShow: false
-                                },
-                            });*/
-
-
-                            // window.open('https://www.baidu.com/s?wd=' + encodeURIComponent(params.name));
-                        })
-
-                        var totalMoney = 0;
-                        for(var i=0; i<newPieDataArr.length; i++){
-                            totalMoney= totalMoney +  new Number(newPieDataArr[i].value);
-                        }
-                        $('.totalMoney').text(totalMoney.toFixed(2))
-
-                    }else{
-                        // 饼图
-                        $('.totalMoney').text('');
-                        var byId = function (id) {
-                            return document.getElementById(id);
-                        };
-                        var barCharts = echarts.init(byId('pieChart'));
-                        var nullPieDataArr =[]
-                        barCharts.setOption(getOptionOfPie(nullPieDataArr));
-                    }
-                }
-            });
-        }
-
-
-// 打开外链
-        // var byId = function (id) {
-        //     return document.getElementById(id);
-        // };
-        // var barChart = echarts.init(byId('barChart'));
-
-        // barChart.setOption(getOption('bar'));
-        // var lineChart = echarts.init(byId('lineChart'));
-        // lineChart.setOption(getOption('line'));
-        // var pieChart = echarts.init(byId('pieChart'));
-        // pieChart.setOption(getOption('pie'));
-        // byId("echarts").addEventListener('click', function () {
-        //     var url = this.getAttribute('data-url');
-        //     plus.runtime.openURL(url);
-        // }, false);
     })
 
 </script>

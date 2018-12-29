@@ -38,6 +38,11 @@
 				油站数据
 			</a>
 		</li>
+		<li class="mui-table-view-cell">
+			<a class="mui-navigate-right" href="pages/rankStation.html">
+				销售排行
+			</a>
+		</li>
 	</ul>
 </div>
 <script src="js/mui.min.js"></script>
@@ -103,6 +108,7 @@
             //预加载
             preload();
         } else {
+			/*
             //显示启动导航
             mui.openWindow({
                 id: 'guide',
@@ -122,6 +128,11 @@
                 //预加载
                 preload();
             }, 200);
+			*/
+		   plus.navigator.closeSplashscreen();
+		   plus.navigator.setFullscreen(false);
+		   //预加载
+		   preload();
         }
 
         //绘制顶部图标
@@ -169,12 +180,14 @@
         titleView.addEventListener("click", function(e) {
             var x = e.clientX;
             if(x < 44) { //触发menu菜单
+						 /*
                 var _left = parseInt(_self.getStyle().left);
                 if(_left > 0) { //处于显示状态
                     closeMenu();
                 } else {
                     openMenu();
                 }
+								*/
             } else if(x > about_left) { //触发关于页面
                 var aniShow = mui.os.plus ? "slide-in-right" : "zoom-fade-out";
                 mui.openWindow({
@@ -385,7 +398,7 @@
         }
 
         if(!_toast || !_toast.isVisible()) {
-            _toast = mui.toast('再按一次返回键退出<br>点此可&nbsp;<span style="border-bottom:1px solid #fff" onclick="openFeedback();">反馈意见</span>', {
+            _toast = mui.toast('再按一次返回键退出', {
                 duration: 'long',
                 type: 'div'
             });
