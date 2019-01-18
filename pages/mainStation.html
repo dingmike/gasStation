@@ -111,7 +111,7 @@
         }
         // 获取30天前的日期
         function getAfterThirtyFormatDate() {
-            var date = new Date(new Date() - 1000 * 60 * 60 * 24 * 7);//最后一个数字30可改，30天的意思
+            var date = new Date(new Date() - 1000 * 60 * 60 * 24 * 6);//最后一个数字30可改，30天的意思
             var seperator1 = "-";
             var year = date.getFullYear();
             var month = date.getMonth() + 1;
@@ -151,12 +151,12 @@
             "data_type": "4"
         };
 
-        //http://192.168.10.23:8080/hdptms/GetStationList?params={"province_id":"1"}
+        //http://192.168.10.23:8080/hdptms8/GetStationList?params={"province_id":"1"}
         $.ajax({
             type: 'post',
             // url:'http://192.168.10.23:9000/Yxb/Check_Amount',
-            // url: 'http://192.168.10.23:8080/hdptms/GetStationList',
-            url: url + 'hdptms/GetStationList',
+            // url: 'http://192.168.10.23:8080/hdptms8/GetStationList',
+            url: url + 'hdptms8/GetStationList',
             dateType: 'json',
             data: { // 省份ID
                 params: '{"province_id":"1"}'
@@ -694,8 +694,8 @@
             $.ajax({
                 type: 'post',
                 // url:'http://192.168.10.23:9000/Yxb/Check_Amount',
-                url: url+'hdptms/SaleStationDataInfo',
-                // url: url+'hdptms/SaleDataInfos',
+                url: url+'hdptms8/SaleStationDataInfo',
+                // url: url+'hdptms8/SaleDataInfos',
                 dateType: 'json',
                 data: { // data_type:1 全部
                     params: params
@@ -768,8 +768,8 @@
         function getPieData(params) {
             $.ajax({
                 type: 'post',
-                url:  url+ 'hdptms/SaleStationDataInfo',
-                // url:  url+ 'hdptms/SaleDataInfos',
+                url:  url+ 'hdptms8/SaleStationDataInfo',
+                // url:  url+ 'hdptms8/SaleDataInfos',
                 dateType: 'json',
                 data: { // data_type:4 各个平台总量  油站饼图
                     // params: '{"begin_date":"2018-07-13","end_date":"2018-08-20","station_id":'+ stationId +',"exchange_type":"油信宝","data_type":"4"}'

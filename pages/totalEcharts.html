@@ -110,7 +110,7 @@
 
         // 获取30天前的日期
         function getAfterThirtyFormatDate() {
-            var date = new Date(new Date() - 1000 * 60 * 60 * 24 * 7);//最后一个数字30可改，30天的意思
+            var date = new Date(new Date() - 1000 * 60 * 60 * 24 * 6);//最后一个数字30可改，30天的意思
             var seperator1 = "-";
             var year = date.getFullYear();
             var month = date.getMonth() + 1;
@@ -641,7 +641,7 @@
             $.ajax({
                 type: 'post',
                 // url:'http://192.168.10.23:9000/Yxb/Check_Amount',
-                url:  url+'hdptms/SaleDataInfo',
+                url:  url+'hdptms8/SaleDataInfo',
                 dateType: 'json',
                 data: { // data_type:1 全部
                     // params: '{"begin_date":"2018-07-13","end_date":"2018-08-20","user_id":"1","exchange_type":"油信宝","data_type":"2"}'
@@ -725,7 +725,7 @@
             $.ajax({
                 type: 'post',
                 // url:'http://192.168.10.23:9000/Yxb/Check_Amount',
-                url: url+ 'hdptms/SaleDataInfo',
+                url: url+ 'hdptms8/SaleDataInfo',
                 dateType: 'json',
                 data: { // data_type:4 各个平台总量
                     // params: '{"begin_date":"2018-07-13","end_date":"2018-08-20","user_id":"1","exchange_type":"油信宝","data_type":"4"}'
