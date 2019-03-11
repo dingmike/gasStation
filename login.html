@@ -144,11 +144,33 @@
         $$.init({
             statusBarBackground: '#f7f7f7'
         });
-        var login_status=localStorage.getItem('login_status');//获取登录状态
-        if(login_status){
-            window.location.href = "main.html";
-            return;
-        }
+
+
+
+        $.ajax({
+            type:'get',
+            // url:'http://192.168.10.23:9000/Yxb/Check_Amount',
+            url: "http://www.youxinbao.com.cn:8080/hdptms8/GetVerificationState?params={memo:\"111863240000293521\"}",
+            dateType:'json',
+            data:{
+                params: "111863240000293521",
+                // password: loginInfo.password
+            },
+            success:function(res){
+                debugger
+            },
+            error:function(xhr,type,errorThrown){
+                //异常处理；
+                console.log(type);
+            }
+        })
+
+
+        // var login_status=localStorage.getItem('login_status');//获取登录状态
+        // if(login_status){
+        //     window.location.href = "main.html";
+        //     return;
+        // }
         $('#login').on('click',function () {
             // localStorage.setItem('bkUrl','http://192.168.10.23:8080/');
             // localStorage.setItem('bkUrl','http://47.98.39.0:9000/');

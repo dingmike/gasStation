@@ -48,6 +48,8 @@
 <script src="js/mui.min.js"></script>
 <script src="js/update.js" type="text/javascript" charset="utf-8"></script>
 <script>
+
+
     mui.init({
         statusBarBackground: '#f7f7f7'
     });
@@ -71,6 +73,7 @@
     }
     //初始化，并预加载webview模式的选项卡
     function preload() {
+
         var menu_style = {
             left: "-70%",
             width: '70%',
@@ -96,6 +99,10 @@
         });*/
     }
     mui.plusReady(function() {
+
+
+
+
         //读取本地存储，检查是否为首次启动
         var showGuide = plus.storage.getItem("lauchFlag");
         //仅支持竖屏显示
